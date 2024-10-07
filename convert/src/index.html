@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+        #exportToPPTXButton, #exportToDOCXButton, #copyLinkButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: none;
+            border: 2px solid #4a90e2;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #exportToPPTXButton:hover, #exportToDOCXButton:hover, #copyLinkButton:hover {
+            background: #4a90e2;
+        }
+        #exportToPPTXButton:before, #exportToDOCXButton:before, #copyLinkButton:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+        #exportToPPTXButton:hover:before, #exportToDOCXButton:hover:before, #copyLinkButton:hover:before {
+            width: 300px;
+            height: 300px;
+        }
+        #exportToPPTXButton:disabled, #exportToDOCXButton:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #copiedMessage {
+            position: absolute;
+            background-color: rgba(53, 53, 53, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        #loadingSpinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4a90e2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #copyLinkButton {
+            display: none;
+        }
+        #statusMessage {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(74, 144, 226, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4a90e2;
+            border-radius: 50%;
+            animation: float 4s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        #dynamicTitle {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    <div class="container">
+        <h1 id="dynamicTitle">PDF Converter</h1>
+        <button id="exportToPPTXButton" disabled>Export to PPTX</button>
+        <button id="exportToDOCXButton" disabled>Export to DOCX</button>
+        <div id="loadingSpinner"></div>
+        <button id="copyLinkButton">Copy Link</button>
+        <div id="copiedMessage" style="display: none;">Copied!</div>
+    </div>
+    <div id="statusMessage"></div>
+
+    <script>
+        function createParticles() {
+            const particles = document.querySelector('.particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 2}s`;
+                particles.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        function showStatus(message) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.style.opacity = '1';
+            setTimeout(() => {
+                statusMessage.style.opacity = '0';
+            }, 3000);
+        }
+
+        function setLoadingState(isLoading) {
+            const title = document.getElementById('dynamicTitle');
+            if (isLoading) {
+                title.style.opacity = 0;
+                setTimeout(() => {
+                    title.textContent = 'Converting';
+                    title.style.opacity = 1;
+                }, 300);
+            } else {
+                title.style.opacity = 0;
+                setTimeout(() => {
+                    title.textContent = 'PDF Converter';
+                    title.style.opacity = 1;
+                }, 300);
+            }
+        }
+
+        // This function will be called from index.js
+        window.setLoadingState = setLoadingState;
+    </script>
+    <script type="module" src="index.js"></script>
+</body>
+</html
